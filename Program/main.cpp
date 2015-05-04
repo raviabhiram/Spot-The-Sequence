@@ -25,7 +25,7 @@ const vec3f *FONT_SIZE_SMALL = &_FONT_SIZE_SMALL;
 int coordinates[11]={0,30,60,90,120,150,180,210,240,270,300};
 int demox[MAX],demoy[MAX],dframe=-1,dcolorg=-300,dcolorw=-301;
 int mousex,mousey,icount=0,score=0,ipnum;
-int curround,level=1,counti,countj,maxx,maxy,shown=0;
+int curround=3,level=3,counti,countj,maxx,maxy,shown=0;
 int kflag=0;
 string str = "LEVEL ";
 int go=0;
@@ -152,7 +152,7 @@ void mouse(int btn,int state,int cmousex,int cmousey)
             cout<<"Score "<<score<<endl;
             if(icount==curround)
             {
-                level++;
+                curround++;
                 shown=0;
                 cout<<"Done with this round.\n";
             }
@@ -175,11 +175,11 @@ void sequence(int level,int curround)
 {
     glLineWidth(1);
     glColor3f(1,1,1);
-    string ans = "Level " + itoa(level);
+    string ans = "Level " + itoa(level-2);
     char *cstr = &ans[0u];
     drawstring(200,400,cstr);
     cout<<"Curround= "<<curround<<endl;
-    int number=level+2;
+    int number=level;
     int i=0,j=0,counti=0,countj=0,offset,boxx,boxy,hx=0,hy,maxx,maxy;
     struct timeval tp;
     offset=100+(12*(MAX-number));//To bring grid to center of the screen
@@ -257,18 +257,21 @@ void sequence(int level,int curround)
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    sleep(2);
     glClearColor(0.3764,0.4901,0.545,1.0);
     if(kflag == 1)
     {
     	if(!shown)
     	{
-        	curround=level*2;
         	if(level>MAX)
         	{
             	cout<<"You're the champ!!\n";
             	exit(0);
         	}
+        	if(curround>(2*level)-2)
+            {
+                level++;
+                curround=3;
+            }
         	sequence(level,curround);
         	shown=1;
         }
