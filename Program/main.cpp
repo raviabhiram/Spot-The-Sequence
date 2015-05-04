@@ -175,9 +175,12 @@ void sequence(int level,int curround)
 {
     glLineWidth(1);
     glColor3f(1,1,1);
-    string ans = "Level " + itoa(level-2);
-    char *cstr = &ans[0u];
-    drawstring(200,400,cstr);
+    string levelstr = "Level " + itoa(level-2);
+    char *lstr = &levelstr[0u];
+    string roundstr = "Round " + itoa(curround-2);
+    char *rstr = &roundstr[0u];
+    drawstring(220,420,lstr);
+    drawstring(220,390,rstr);
     cout<<"Curround= "<<curround<<endl;
     int number=level;
     int i=0,j=0,counti=0,countj=0,offset,boxx,boxy,hx=0,hy,maxx,maxy;
@@ -252,6 +255,9 @@ void sequence(int level,int curround)
         sleep(1);
         glFlush();
     }
+    glColor3f(1,1,1);
+    drawstring(180,350,"Now enter the input.");
+    glFlush();
 }
 
 void display()
