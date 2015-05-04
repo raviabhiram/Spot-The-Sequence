@@ -23,8 +23,8 @@ const vec3f _FONT_SIZE_SMALL = {0.25f, 0.25f, 1.0f};
 const vec3f *FONT_SIZE_SMALL = &_FONT_SIZE_SMALL;
 
 int coordinates[11]={0,30,60,90,120,150,180,210,240,270,300};
-int demox[MAX],demoy[MAX],dframe=-1,dcolorg=-300,dcolorw=-301;
-int mousex,mousey,icount=0,score=0,ipnum;
+int demox[MAX],demoy[MAX],dframe=-1,dcolorg=-300,dcolorw=-301,gtemp,wtemp;
+int mousex,mousey,icount=0,score=0,ipnum,opnum=0;
 int curround=3,level=3,counti,countj,maxx,maxy,shown=0;
 int kflag=0;
 string str = "LEVEL ";
@@ -147,6 +147,25 @@ void mouse(int btn,int state,int cmousex,int cmousey)
         cout<<"Mouse Clicked.\n";
         if(tmousex>=demox[icount] && tmousex<=(demox[icount]+INCR) && tmousey>=demoy[icount] && tmousey<=(demoy[icount]+INCR))
         {
+            glColor3f(0.0,1,0);
+            glBegin(GL_QUADS);
+                glVertex3d(demox[icount],demoy[icount],gtemp);
+                glVertex3d(demox[icount],demoy[icount]+INCR,gtemp);
+                glVertex3d(demox[icount]+INCR,demoy[icount]+INCR,gtemp);
+                glVertex3d(demox[icount]+INCR,demoy[icount],gtemp);
+            glEnd();
+            gtemp+=2;
+            glFlush();
+            wtemp+=2;
+            sleep(1);
+            glColor3f(0.3764,0.4901,0.545);
+            glBegin(GL_QUADS);
+                glVertex3d(demox[icount],demoy[icount],wtemp);
+                glVertex3d(demox[icount],demoy[icount]+INCR,wtemp);
+                glVertex3d(demox[icount]+INCR,demoy[icount]+INCR,wtemp);
+                glVertex3d(demox[icount]+INCR,demoy[icount],wtemp);
+            glEnd();
+            glFlush();
             score++;
             icount++;
             cout<<"Score "<<score<<endl;
@@ -163,9 +182,7 @@ void mouse(int btn,int state,int cmousex,int cmousey)
 	    frontScreen();
 		sleep(5);
             cout<<"Sorry wrong input.\n";
-            cout<<"Actual answerx:- "<<demox[icount]<<"<x<"<<demox[icount]+INCR<<endl;
-            cout<<"Actual answery:- "<<demoy[icount]<<"<x<"<<demoy[icount]+INCR<<endl;
-            cout<<"x "<<tmousex<<" y "<<tmousey<<endl;
+            cout<<"Your score is:- "<<score<<"!!!\nCongrats\n";
             exit(0);
         }
     }
@@ -187,8 +204,8 @@ void sequence(int level,int curround)
     struct timeval tp;
     offset=100+(12*(MAX-number));//To bring grid to center of the screen
     glColor3f(1.0,0.0,0.0);
-    int gtemp=dcolorg;
-    int wtemp=dcolorw;
+    gtemp=dcolorg;
+    wtemp=dcolorw;
     icount=0;
     for(i=0;;i+=INCR)
     {
@@ -234,7 +251,16 @@ void sequence(int level,int curround)
         demox[hx]=offset+boxx;
         demoy[hx]=offset+boxy;
         hx++;
-        glColor3f(0.0,1.0,0.0);
+        if(opnum==0)
+        {
+            opnum=1;
+            glColor3f(0.0,1.0,0.0);
+        }
+        else if(opnum==1)
+        {
+            opnum=0;
+            glColor3f(0.0,0.0,1.0);
+        }
         glBegin(GL_QUADS);
             glVertex3d(offset+boxx,offset+boxy,gtemp);
             glVertex3d(offset+boxx,offset+boxy+INCR,gtemp);
@@ -243,7 +269,7 @@ void sequence(int level,int curround)
         glEnd();
         gtemp+=2;
         glFlush();
-        sleep(2);
+        sleep(1);
         wtemp+=2;
         glColor3f(0.3764,0.4901,0.545);
         glBegin(GL_QUADS);
