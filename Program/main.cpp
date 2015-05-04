@@ -48,133 +48,91 @@ string itoa(int i)
 	return ret;
 }
 
-void drawStrokeText(std::string text, int x, int y, int z, const vec3f *fontSize) {
-
+void drawStrokeText(std::string text, int x, int y, int z, const vec3f *fontSize)
+{
     glPushMatrix();
-
     glTranslatef(x, y, z);
     glScalef(fontSize->x, fontSize->y, fontSize->z);
     glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char const *) text.c_str());
-
     glPopMatrix();
 }
 
-
-void drawstring( float x, float y,const char* string ) {
+void drawstring( float x, float y,const char* string )
+{
 	int j = strlen( string ),i;
- 
 	glRasterPos2f( x, y );
-	for( int i = 0; i < j; i++ ) {
-		glutBitmapCharacter( /*GLUT_BITMAP_TIMES_ROMAN_24*/GLUT_BITMAP_HELVETICA_18, string[i] );
+	for( int i = 0; i < j; i++ )
+	{
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,string[i]);
 	}
 }
-
 
 void frontScreen()
 {
     glClear(GL_COLOR_BUFFER_BIT);
-	glColor3f(0.4078,0.6235,0.2196);
-	
-//	glColor3f(0,0,0);
-	glBegin( GL_POLYGON );
-		glVertex2d(0,500);
+    glColor3f(0.4078,0.6235,0.2196);
+    glBegin( GL_POLYGON );
+        glVertex2d(0,500);
 		glVertex2d(500,500);
 		glVertex2d(500,40);
 		glVertex2d(0,40);
 	glEnd();
-	
-	
-
-  
-
-	
-
 	glColor3f(0.545,0.7647,0.2901);
-   glBegin( GL_POLYGON );
-	
+    glBegin( GL_POLYGON );
         glVertex2f(0,0);
-	glVertex2f(500,0);
-	glVertex2f(500,40);
-	glVertex2f(0,40);
+        glVertex2f(500,0);
+        glVertex2f(500,40);
+        glVertex2f(0,40);
 	glEnd();
- 
 	glLineWidth(3);
     drawStrokeText("SPOT THE SEQUENCE", 80, 3*500/4, 0, FONT_SIZE_SMALL);
-
 	glColor3f(1,1,1);
 	drawstring(5,14,"Developed by : Abhiram Ravi Bharadwaj and Harsha R S");
-        glColor3f(1,0,0);
+    glColor3f(1,0,0);
 	drawstring(350,14,"Guide : SARASVATHI");
-	
 	glColor3f(1,0,1);
 	drawstring(130,100,"CLICK TO CONTINUE TO THE GAME");
-	
-	
-	
 	if(go == 1)
-{
-	 glColor3f(1,1,1);
-    string ans = "Your Score is " + itoa(score);
-    char *cstr = &ans[0u];
-    drawstring(300,400,cstr);
-}
-
+    {
+        glColor3f(1,1,1);
+        string ans = "Your Score is " + itoa(score);
+        char *cstr = &ans[0u];
+        drawstring(300,400,cstr);
+    }
 	glFlush();
-	
-	
 }
 
 void GameOver()
 {
-	
-	 glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(0.4078,0.6235,0.2196);
-	
-//	glColor3f(0,0,0);
 	glBegin( GL_POLYGON );
 		glVertex2d(0,500);
 		glVertex2d(500,500);
 		glVertex2d(500,40);
 		glVertex2d(0,40);
 	glEnd();
-	
-	
-
-  
-
-	
-
-	glColor3f(0.545,0.7647,0.2901);
-   glBegin( GL_POLYGON );
-	
+    glColor3f(0.545,0.7647,0.2901);
+    glBegin( GL_POLYGON );
         glVertex2f(0,0);
-	glVertex2f(500,0);
-	glVertex2f(500,40);
-	glVertex2f(0,40);
+        glVertex2f(500,0);
+        glVertex2f(500,40);
+        glVertex2f(0,40);
 	glEnd();
- 
-	
-
- 
-	
-	 glColor3f(1,1,1);
-    string ans = "Your Score is " + itoa(score);
+    glColor3f(1,1,1);
+        string ans = "Your Score is " + itoa(score);
     char *cstr = &ans[0u];
     drawstring(200,400,cstr);
-
 	glFlush();
-	
-	
 }
-
 
 void mouse(int btn,int state,int cmousex,int cmousey)
 {
     if(kflag == 0)
     {
-	kflag=1;
-	return;
-     }	
+        kflag=1;
+        return;
+    }
     cout<<"cmousex= "<<cmousex<<" cmousey "<<cmousey<<endl;
     float tmousex,tmousey;
     tmousex=(cmousex*500)/(750);
@@ -216,11 +174,10 @@ void mouse(int btn,int state,int cmousex,int cmousey)
 void sequence(int level,int curround)
 {
     glLineWidth(1);
-    	glColor3f(1,1,1);
-    	string ans = "Level " + itoa(level);
-    	char *cstr = &ans[0u];
-    	drawstring(200,400,cstr);
-	
+    glColor3f(1,1,1);
+    string ans = "Level " + itoa(level);
+    char *cstr = &ans[0u];
+    drawstring(200,400,cstr);
     cout<<"Curround= "<<curround<<endl;
     int number=level+2;
     int i=0,j=0,counti=0,countj=0,offset,boxx,boxy,hx=0,hy,maxx,maxy;
@@ -284,9 +241,8 @@ void sequence(int level,int curround)
         gtemp+=2;
         glFlush();
         sleep(2);
-        
         wtemp+=2;
-	glColor3f(0.3764,0.4901,0.545);
+        glColor3f(0.3764,0.4901,0.545);
         glBegin(GL_QUADS);
             glVertex3d(offset+boxx,offset+boxy,wtemp);
             glVertex3d(offset+boxx,offset+boxy+INCR,wtemp);
@@ -296,15 +252,15 @@ void sequence(int level,int curround)
         sleep(1);
         glFlush();
     }
-   
 }
 
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-     glClearColor(0.3764,0.4901,0.545,1.0);
+    sleep(2);
+    glClearColor(0.3764,0.4901,0.545,1.0);
     if(kflag == 1)
-     {	
+    {
     	if(!shown)
     	{
         	curround=level*2;
@@ -315,13 +271,13 @@ void display()
         	}
         	sequence(level,curround);
         	shown=1;
-	}
-     }
+        }
+    }
 }
 
 void myinit()
 {
-    
+
     glClearColor(1.0,1.0,1.0,1.0);//Clear the background
     glOrtho(0,500,0,500,-500,500);
 }
@@ -334,8 +290,8 @@ int main(int argc, char** argv)
     glutInitWindowPosition(200,200);//Initialise window position
     glutCreateWindow("Sequence");
     myinit();
-    frontScreen();    
-    glutDisplayFunc(display);    
+    frontScreen();
+    glutDisplayFunc(display);
     glutMouseFunc(mouse);
     glEnable(GL_DEPTH_TEST);
     glutMainLoop();
