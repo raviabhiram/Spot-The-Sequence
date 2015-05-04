@@ -264,7 +264,7 @@ void display()
     	if(!shown)
     	{
         	curround=level*2;
-        	if(level>10)
+        	if(level>MAX)
         	{
             	cout<<"You're the champ!!\n";
             	exit(0);
