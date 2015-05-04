@@ -3,21 +3,178 @@
 #include<unistd.h>
 #include<sys/time.h>
 #include<math.h>
+#include<stdlib.h>
+#include<string.h>
+#include<stdio.h>
+#include <GL/freeglut.h>
 
 #define MAX 10
 #define INCR 30
 
 using namespace std;
 
+typedef struct {
+    GLfloat x;
+    GLfloat y;
+    GLfloat z;
+} vec3f;
+
+const vec3f _FONT_SIZE_SMALL = {0.25f, 0.25f, 1.0f};
+const vec3f *FONT_SIZE_SMALL = &_FONT_SIZE_SMALL;
+
 int coordinates[11]={0,30,60,90,120,150,180,210,240,270,300};
 int demox[MAX],demoy[MAX],dframe=-1,dcolorg=-300,dcolorw=-301;
 int mousex,mousey,icount=0,score=0,ipnum;
 int curround,level=1,counti,countj,maxx,maxy,shown=0;
+int kflag=0;
+string str = "LEVEL ";
+int go=0;
 
+
+void myinit();
 void display();
+void sequence(int level,int curround);
+
+string itoa(int i)
+{
+	string ret = "";
+	while (i)
+	{
+		int temp = i%10;
+		ret+= temp + '0';
+		cout<<ret<<endl;
+		i/=10;
+	}
+	return ret;
+}
+
+void drawStrokeText(std::string text, int x, int y, int z, const vec3f *fontSize) {
+
+    glPushMatrix();
+
+    glTranslatef(x, y, z);
+    glScalef(fontSize->x, fontSize->y, fontSize->z);
+    glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char const *) text.c_str());
+
+    glPopMatrix();
+}
+
+
+void drawstring( float x, float y,const char* string ) {
+	int j = strlen( string ),i;
+ 
+	glRasterPos2f( x, y );
+	for( int i = 0; i < j; i++ ) {
+		glutBitmapCharacter( /*GLUT_BITMAP_TIMES_ROMAN_24*/GLUT_BITMAP_HELVETICA_18, string[i] );
+	}
+}
+
+
+void frontScreen()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.4078,0.6235,0.2196);
+	
+//	glColor3f(0,0,0);
+	glBegin( GL_POLYGON );
+		glVertex2d(0,500);
+		glVertex2d(500,500);
+		glVertex2d(500,40);
+		glVertex2d(0,40);
+	glEnd();
+	
+	
+
+  
+
+	
+
+	glColor3f(0.545,0.7647,0.2901);
+   glBegin( GL_POLYGON );
+	
+        glVertex2f(0,0);
+	glVertex2f(500,0);
+	glVertex2f(500,40);
+	glVertex2f(0,40);
+	glEnd();
+ 
+	glLineWidth(3);
+    drawStrokeText("SPOT THE SEQUENCE", 80, 3*500/4, 0, FONT_SIZE_SMALL);
+
+	glColor3f(1,1,1);
+	drawstring(5,14,"Developed by : Abhiram Ravi Bharadwaj and Harsha R S");
+        glColor3f(1,0,0);
+	drawstring(350,14,"Guide : SARASVATHI");
+	
+	glColor3f(1,0,1);
+	drawstring(130,100,"CLICK TO CONTINUE TO THE GAME");
+	
+	
+	
+	if(go == 1)
+{
+	 glColor3f(1,1,1);
+    string ans = "Your Score is " + itoa(score);
+    char *cstr = &ans[0u];
+    drawstring(300,400,cstr);
+}
+
+	glFlush();
+	
+	
+}
+
+void GameOver()
+{
+	
+	 glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.4078,0.6235,0.2196);
+	
+//	glColor3f(0,0,0);
+	glBegin( GL_POLYGON );
+		glVertex2d(0,500);
+		glVertex2d(500,500);
+		glVertex2d(500,40);
+		glVertex2d(0,40);
+	glEnd();
+	
+	
+
+  
+
+	
+
+	glColor3f(0.545,0.7647,0.2901);
+   glBegin( GL_POLYGON );
+	
+        glVertex2f(0,0);
+	glVertex2f(500,0);
+	glVertex2f(500,40);
+	glVertex2f(0,40);
+	glEnd();
+ 
+	
+
+ 
+	
+	 glColor3f(1,1,1);
+    string ans = "Your Score is " + itoa(score);
+    char *cstr = &ans[0u];
+    drawstring(200,400,cstr);
+
+	glFlush();
+	
+	
+}
+
 
 void mouse(int btn,int state,int cmousex,int cmousey)
 {
+    if(kflag == 0)
+    {
+	kflag=1;
+	return;
+     }	
     cout<<"cmousex= "<<cmousex<<" cmousey "<<cmousey<<endl;
     float tmousex,tmousey;
     tmousex=(cmousex*500)/(750);
@@ -26,7 +183,6 @@ void mouse(int btn,int state,int cmousex,int cmousey)
     if(shown!=1)
     {
         display();
-        //exit(0);
     }
     if(btn==GLUT_LEFT_BUTTON && state==GLUT_DOWN)
     {
@@ -45,6 +201,9 @@ void mouse(int btn,int state,int cmousex,int cmousey)
         }
         else
         {
+	    go=1;
+	    frontScreen();
+		sleep(5);
             cout<<"Sorry wrong input.\n";
             cout<<"Actual answerx:- "<<demox[icount]<<"<x<"<<demox[icount]+INCR<<endl;
             cout<<"Actual answery:- "<<demoy[icount]<<"<x<"<<demoy[icount]+INCR<<endl;
@@ -56,6 +215,12 @@ void mouse(int btn,int state,int cmousex,int cmousey)
 
 void sequence(int level,int curround)
 {
+    glLineWidth(1);
+    	glColor3f(1,1,1);
+    	string ans = "Level " + itoa(level);
+    	char *cstr = &ans[0u];
+    	drawstring(200,400,cstr);
+	
     cout<<"Curround= "<<curround<<endl;
     int number=level+2;
     int i=0,j=0,counti=0,countj=0,offset,boxx,boxy,hx=0,hy,maxx,maxy;
@@ -72,6 +237,7 @@ void sequence(int level,int curround)
         {
             countj++;
             glPointSize(2);
+            glColor3f(1.0,1.0,1.0);
             glBegin(GL_LINE_LOOP);
                 glVertex3d(offset+i,offset+j,dframe);
                 glVertex3d(offset+i,offset+j+INCR,dframe);
@@ -90,10 +256,10 @@ void sequence(int level,int curround)
             maxx=i;//Storing max value of x for highlighted block to stay within grid
             break;
         }
-        //cout<<"maxx= "<<maxx<<"\t maxy="<<maxy<<endl<<endl;
     }
     glFlush();
     sleep(2);
+
     for(hy=0;hy<curround;hy++)
     {
         int r;
@@ -105,11 +271,8 @@ void sequence(int level,int curround)
         r=floor(tp.tv_usec%(number));
         cout<<r<<endl;
         boxy=coordinates[r];
-        //cout<<"offset= "<<offset<<endl;
-        //cout<<"boxx= "<<boxx<<" boxy= "<<boxy<<endl;
         demox[hx]=offset+boxx;
         demoy[hx]=offset+boxy;
-        //cout<<"x= "<<demox[hx]<<" y= "<<demoy[hx]<<endl;
         hx++;
         glColor3f(0.0,1.0,0.0);
         glBegin(GL_QUADS);
@@ -118,15 +281,12 @@ void sequence(int level,int curround)
             glVertex3d(offset+boxx+INCR,offset+boxy+INCR,gtemp);
             glVertex3d(offset+boxx+INCR,offset+boxy,gtemp);
         glEnd();
-        //cout<<"bgtemp "<<gtemp<<"\t";
-        //cout<<"bwtemp "<<wtemp<<endl;
         gtemp+=2;
         glFlush();
         sleep(2);
-        glColor3f(1.0,1.0,1.0);
+        
         wtemp+=2;
-        //cout<<"agtemp "<<gtemp<<"\t";
-        //cout<<"awtemp "<<wtemp<<endl;
+	glColor3f(0.3764,0.4901,0.545);
         glBegin(GL_QUADS);
             glVertex3d(offset+boxx,offset+boxy,wtemp);
             glVertex3d(offset+boxx,offset+boxy+INCR,wtemp);
@@ -135,30 +295,33 @@ void sequence(int level,int curround)
         glEnd();
         sleep(1);
         glFlush();
-        //for(int a=0;a<2*curround;a++)
-            //cout<<"The coordinates of "<<a<<"th display block is:- x="<<demox[a]<<" y= "<<demoy[a]<<endl;
     }
+   
 }
 
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    if(!shown)
-    {
-        curround=level*2;
-        if(level>10)
-        {
-            cout<<"You're the champ!!\n";
-            exit(0);
-        }
-        sequence(level,curround);
-        shown=1;
-    }
+     glClearColor(0.3764,0.4901,0.545,1.0);
+    if(kflag == 1)
+     {	
+    	if(!shown)
+    	{
+        	curround=level*2;
+        	if(level>10)
+        	{
+            	cout<<"You're the champ!!\n";
+            	exit(0);
+        	}
+        	sequence(level,curround);
+        	shown=1;
+	}
+     }
 }
 
 void myinit()
 {
-    cout<<"Inside init function.\n";
+    
     glClearColor(1.0,1.0,1.0,1.0);//Clear the background
     glOrtho(0,500,0,500,-500,500);
 }
@@ -171,9 +334,9 @@ int main(int argc, char** argv)
     glutInitWindowPosition(200,200);//Initialise window position
     glutCreateWindow("Sequence");
     myinit();
-    glutDisplayFunc(display);
+    frontScreen();    
+    glutDisplayFunc(display);    
     glutMouseFunc(mouse);
-    //glutPostRedisplay();
     glEnable(GL_DEPTH_TEST);
     glutMainLoop();
     return 0;
