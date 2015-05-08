@@ -24,7 +24,7 @@ const vec3f *FONT_SIZE_SMALL = &_FONT_SIZE_SMALL;
 
 int coordinates[11]={0,30,60,90,120,150,180,210,240,270,300};
 int demox[MAX],demoy[MAX],dframe=-1,dcolorg=-4000,dcolorw=-4001,gtemp,wtemp;
-int mousex,mousey,icount=0,score=0,ipnum,opnum=0;
+int mousex,mousey,icount=0,score=100,ipnum,opnum=0;
 int curround=3,level=3,counti,countj,maxx,maxy,shown=0;
 int kflag=0;
 string str = "LEVEL ";
@@ -38,7 +38,7 @@ void sequence(int level,int curround);
 string itoa(int i)
 {
 	string ret = "";
-
+	
 	if(i == 0)
 	{
 		int temp=0;
@@ -56,7 +56,7 @@ string itoa(int i)
 			ret= strtemp+ret;
 			cout<<ret<<endl;
 			i/=10;
-		}
+		}	
 	}
 	return ret;
 }
@@ -103,7 +103,7 @@ void frontScreen()
 	drawstring(5,14,"Developed by : Abhiram Ravi Bharadwaj and Harsha R S");
     glColor3f(1,0,0);
 	drawstring(350,14,"Guide : SARASVATHI");
-	glColor3f(0.7,0.7,0.7);
+	glColor3f(1,0,1);
 	drawstring(130,100,"CLICK TO CONTINUE TO THE GAME");
 
 	int i,j,counti=0,countj=0;
@@ -124,6 +124,15 @@ void frontScreen()
             glEnd();
          }
     }
+    glFlush();
+	
+	/*if(go == 1)
+    {
+        glColor3f(1,1,1);
+        string ans = "Your Score is " + itoa(score);
+        char *cstr = &ans[0u];
+        drawstring(300,400,cstr);
+    }*/
 	glFlush();
 }
 
@@ -220,10 +229,10 @@ void mouse(int btn,int state,int cmousex,int cmousey)
             sleep(3);
 	    string gomsg = "Your Score is:- " + itoa(score+1-1);
 	    char *gostr = &gomsg[0u];
-    	    drawstring(190,50,gostr);
-	    drawstring(200,100,"Game Over!!");
+    	    drawstring(100,100,gostr);
+	    drawstring(100,200,"Game Over!!");
 	    glFlush();
-	    sleep(3);
+	    sleep(5);
             cout<<"Sorry wrong input.\n";
             cout<<"Your score is:- "<<score<<"!!!\nCongrats\n";
             myexit();
