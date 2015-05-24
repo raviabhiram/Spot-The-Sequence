@@ -6,7 +6,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<stdio.h>
-#include <GL/freeglut.h>
+#include<GL/freeglut.h>
 
 #define MAX 10
 #define INCR 30
@@ -22,17 +22,21 @@ typedef struct {
 const vec3f _FONT_SIZE_SMALL = {0.25f, 0.25f, 1.0f};
 const vec3f *FONT_SIZE_SMALL = &_FONT_SIZE_SMALL;
 
+const vec3f _FONT_SIZE_XSMALL = {0.15f, 0.15f, 1.0f};
+const vec3f *FONT_SIZE_XSMALL = &_FONT_SIZE_XSMALL;
+
 int coordinates[11]={0,30,60,90,120,150,180,210,240,270,300};
-int demox[MAX],demoy[MAX],dframe=-1,dcolorg=-4000,dcolorw=-4001,gtemp,wtemp;
+int demox[MAX],demoy[MAX],dframe=-1,dcolorg=-3000,dcolorw=-3001,gtemp,wtemp;
 int mousex,mousey,icount=0,score=0,ipnum,opnum=0;
 int curround=3,level=3,counti,countj,maxx,maxy,shown=0;
-int kflag=0;
+int kflag=0,iflag=0;
 string str = "LEVEL ";
 int go=0;
 
-
 void myinit();
 void display();
+void frontScreen();
+void instructions();
 void sequence(int level,int curround);
 
 string itoa(int i)
@@ -54,7 +58,6 @@ string itoa(int i)
 			temp = (i%10);
 			strtemp = temp + '0';
 			ret= strtemp+ret;
-			cout<<ret<<endl;
 			i/=10;
 		}
 	}
@@ -72,13 +75,14 @@ void drawStrokeText(std::string text, int x, int y, int z, const vec3f *fontSize
 
 void drawstring( float x, float y,const char* string )
 {
-	int j = strlen( string ),i;
+    int j = strlen( string ),i;
 	glRasterPos2f( x, y );
 	for( int i = 0; i < j; i++ )
 	{
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,string[i]);
 	}
 }
+
 
 void frontScreen()
 {
@@ -92,7 +96,7 @@ void frontScreen()
 	glEnd();
 	glColor3f(0.545,0.7647,0.2901);
     glBegin( GL_POLYGON );
-        glVertex3f(0,0,5);
+        glVertex3f(0,0,0);
         glVertex3f(500,0,5);
         glVertex3f(500,40,5);
         glVertex3f(0,40,5);
@@ -106,15 +110,16 @@ void frontScreen()
 	glColor3f(0.7,0.7,0.7);
 	drawstring(130,100,"CLICK TO CONTINUE TO THE GAME");
 
-	int i,j,counti=0,countj=0;
+    int i,j,counti=0,countj=0;
 	int foffset=100+(12*(MAX-4));
-	 for(i=0;i<5*INCR;i+=INCR)
-    	{
+
+    for(i=0;i<5*INCR;i+=INCR)
+    {
         counti++;
         for(j=0;j<5*INCR;j+=INCR)
         {
             countj++;
-	    glLineWidth(1);
+            glLineWidth(1);
             glColor3f(1.0,1.0,1.0);
             glBegin(GL_LINE_LOOP);
                 glVertex3d(foffset+i,foffset+j,dframe);
@@ -124,34 +129,11 @@ void frontScreen()
             glEnd();
          }
     }
+
 	glFlush();
 }
 
-void GameOver()
-{
 
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	glColor3f(0.4078,0.6235,0.2196);
-	glBegin( GL_POLYGON );
-		glVertex2d(0,500);
-		glVertex2d(500,500);
-		glVertex2d(500,40);
-		glVertex2d(0,40);
-	glEnd();
-    glColor3f(0.545,0.7647,0.2901);
-    glBegin( GL_POLYGON );
-        glVertex2f(0,0);
-        glVertex2f(500,0);
-        glVertex2f(500,40);
-        glVertex2f(0,40);
-	glEnd();
-    glColor3f(1,1,1);
-	drawstring(200,400,"hello");
-        string ans = "Your Score is " + itoa(score);
-    char *gstr = &ans[0u];
-    drawstring(200,400,gstr);
-	glFlush();
-}
 
 void myexit()
 {
@@ -160,23 +142,20 @@ void myexit()
 
 void mouse(int btn,int state,int cmousex,int cmousey)
 {
-    if(kflag == 0)
+	if(kflag == 0 && state == GLUT_DOWN)
     {
-        kflag=1;
+	kflag = 1;
         return;
     }
-    cout<<"cmousex= "<<cmousex<<" cmousey "<<cmousey<<endl;
     float tmousex,tmousey;
     tmousex=(cmousex*500)/(750);
     tmousey=500-(cmousey*500)/(700);
-    cout<<"tmousex= "<<tmousex<<" tmousey "<<tmousey<<endl;
     if(shown!=1)
     {
         display();
     }
     if(btn==GLUT_LEFT_BUTTON && state==GLUT_DOWN)
     {
-        cout<<"Mouse Clicked.\n";
         if(tmousex>=demox[icount] && tmousex<=(demox[icount]+INCR) && tmousey>=demoy[icount] && tmousey<=(demoy[icount]+INCR))
         {
             glColor3f(0.0,1,0);
@@ -199,17 +178,15 @@ void mouse(int btn,int state,int cmousex,int cmousey)
             glEnd();
             score++;
             icount++;
-            cout<<"Score "<<score<<endl;
             if(icount==curround)
             {
                 curround++;
                 shown=0;
-                cout<<"Done with this round.\n";
             }
         }
         else
         {
-	    glColor3f(1.0,0,0);
+            glColor3f(1.0,0,0);
             glBegin(GL_QUADS);
                 glVertex3d(demox[icount],demoy[icount],gtemp);
                 glVertex3d(demox[icount],demoy[icount]+INCR,gtemp);
@@ -218,14 +195,12 @@ void mouse(int btn,int state,int cmousex,int cmousey)
             glEnd();
             glFlush();
             sleep(3);
-	    string gomsg = "Your Score is:- " + itoa(score+1-1);
-	    char *gostr = &gomsg[0u];
-    	    drawstring(190,50,gostr);
-	    drawstring(200,100,"Game Over!!");
-	    glFlush();
-	    sleep(3);
-            cout<<"Sorry wrong input.\n";
-            cout<<"Your score is:- "<<score<<"!!!\nCongrats\n";
+            string gomsg = "Your Score is:- " + itoa(score+1-1);
+            char *gostr = &gomsg[0u];
+            drawstring(190,50,gostr);
+            drawstring(200,100,"Game Over!!");
+            glFlush();
+            sleep(3);
             myexit();
         }
     }
@@ -233,19 +208,21 @@ void mouse(int btn,int state,int cmousex,int cmousey)
 
 void sequence(int level,int curround)
 {
-    glLineWidth(1);
     glColor3f(1,1,1);
+    glLineWidth(3);
     string levelstr = "Level " + itoa(level-2);
     char *lstr = &levelstr[0u];
     string roundstr = "Round " + itoa(curround-2);
     char *rstr = &roundstr[0u];
-    drawstring(220,420,lstr);
-    drawstring(220,390,rstr);
-    cout<<"Curround= "<<curround<<endl;
+    glColor3f(0.698,0.9215,0.949);
+    drawStrokeText(lstr,190,420,0,FONT_SIZE_SMALL);
+    glLineWidth(1);
+    glColor3f(1,1,1);
+    drawStrokeText(rstr,200,360,0,FONT_SIZE_XSMALL);
     int number=level;
     int i=0,j=0,counti=0,countj=0,offset,boxx,boxy,hx=0,hy,maxx,maxy;
     struct timeval tp;
-    offset=100+(12*(MAX-number));//To bring grid to center of the screen
+    offset=120+(12*(MAX-number));//To bring grid to center of the screen
     glColor3f(1.0,0.0,0.0);
     gtemp=dcolorg;
     wtemp=dcolorw;
@@ -285,11 +262,9 @@ void sequence(int level,int curround)
         int r;
         gettimeofday(&tp,NULL);
         r=floor(tp.tv_usec%(number));
-        cout<<r<<"\t";
         boxx=coordinates[r];
         gettimeofday(&tp,NULL);
         r=floor(tp.tv_usec%(number));
-        cout<<r<<endl;
         boxy=coordinates[r];
         demox[hx]=offset+boxx;
         demoy[hx]=offset+boxy;
@@ -297,7 +272,7 @@ void sequence(int level,int curround)
         if(opnum==0)
         {
             opnum=1;
-            glColor3f(0.0,1.0,0.0);
+            glColor3f(0.5,0,0.5);
         }
         else if(opnum==1)
         {
@@ -324,23 +299,24 @@ void sequence(int level,int curround)
         sleep(1);
         glFlush();
     }
-    glColor3f(1,1,1);
-    drawstring(180,350,"Now enter the input.");
+    glColor3f(0.7,0.7,0.7);
+    drawstring(175,offset-30,"Now Input the Sequence : ");
     glFlush();
 }
 
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
     glClearColor(0.3764,0.4901,0.545,1.0);
+
     if(kflag == 1)
     {
     	if(!shown)
     	{
         	if(level>MAX)
         	{
-            	cout<<"You're the champ!!\n";
-            	exit(0);
+                exit(0);
         	}
         	if(curround>(2*level)-2)
             {
